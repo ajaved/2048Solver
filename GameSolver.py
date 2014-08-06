@@ -2,6 +2,8 @@
 from __future__ import division
 import sys
 import re
+import _scoring_board as c_score
+import numpy
 from math import log
 from time import sleep
 from random import randint
@@ -204,11 +206,12 @@ class GameAiController:
         next_boards[3].make_move(LEFT_MOVE)
         next_scores = []
         for n in range(len(next_boards)):
-            # print  (next_boards[n].current_state)
             if next_boards[n].current_state != self.board.current_state:
-#                next_scores.append(self.score_function(next_boards[n], [self.board.current_state, next_boards[n].current_state]))
-#                next_scores.append(self.short_look_scoring(next_boards[n], self.board))
-                next_scores.append(self.minimax_scoring(next_boards[n], 1))
+                # Convert to numpy matrix
+                numpy_board = numpy.array(next_boards[n].current_state)
+                numpy_board = numpy_board.astype(numpy.int32, copy=False)
+                next_scores.append(c_score.score_board(numpy_board))
+                # next_scores.append(self.minimax_scoring(next_boards[n], 1))
             else:
                 next_scores.append(-sys.maxint)
         
