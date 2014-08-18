@@ -2,6 +2,8 @@
 #include <numpy/arrayobject.h>
 #include "scoring_board.h"
 
+extern int max_depth;
+
 static char module_docstring[] =
   "This module provides an interface for scoring a scoring a 2048 board by looking ahead at future possible boards.";
 static char scoring_board_docstring[] =
@@ -32,7 +34,7 @@ scoring_board_score(PyObject *self, PyObject *args)
   PyObject *board;
   
   /* Parse the input tuple */
-  if (!PyArg_ParseTuple(args, "O", &board))
+  if (!PyArg_ParseTuple(args, "iO", &max_depth, &board))
     return NULL;
 
   /* Interpret the input objects as numpy arrays. */
@@ -52,11 +54,17 @@ scoring_board_score(PyObject *self, PyObject *args)
   int *c_board  = (int*)PyArray_DATA(board);
 
   /* Generate 2 dimensional array */
-  int *c_ptrs[X];
-  int n;
-  for (n = 0; n < X; n++){
-    c_ptrs[n] = c_board + n*Y;
-  }
+  //int *c_ptrs[X];
+  /* int n; */
+  /* for (n = 0; n < X; n++){ */
+  /*   c_ptrs[n] = c_board + n*Y; */
+  /* } */
+
+  /* int* board_ptrs[Y]; */
+  /* int i; */
+  /* for (i = 0; i < Y; i++){ */
+  /*   board_ptrs[i] = c_board + i*X; */
+  /* } */
 
   /* int i, j; */
   /* printf("Received WHA Board:\n"); */
@@ -68,12 +76,12 @@ scoring_board_score(PyObject *self, PyObject *args)
   /* } */
 
   /* Call the external C function to compute the board score. */
-  int score = score_board(c_ptrs, X, Y);
+  float score = score_board(c_board, X, Y, 0);
 
   /* Clean up. */
   Py_DECREF(board);
 
   /* Build the output tuple */
-  PyObject *py_score = Py_BuildValue("i", score);
+  PyObject *py_score = Py_BuildValue("f", score);
   return py_score;
 }

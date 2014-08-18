@@ -6,6 +6,7 @@ import _scoring_board as c_score
 import numpy
 from math import log
 from time import sleep
+from time import clock
 from random import randint
 from copy import deepcopy
 from selenium import webdriver
@@ -163,8 +164,8 @@ class GameAiController:
         self.play_game()
 
     def play_game(self):
-        while self.max_tile(self.board) < 2048: 
-            sleep(0.8)
+        while self.max_tile(self.board) < 64*2048: 
+            sleep(0.1)
             #print('Board before move:')
             #print(self.board.current_state)
 
@@ -179,12 +180,12 @@ class GameAiController:
                 print('YOU LOST!')
                 self.frame.end()
             # sleep(1)
-            print('Move: ' + str(next_move))
+            # print('Move: ' + str(next_move))
             self.send_move_to_game(next_move)
         
         # User won
         print('YOU WON!')
-        self.frame.end()
+        # self.frame.end()
 
     def update_board(self):
         current_board = deepcopy(self.board)
@@ -204,24 +205,30 @@ class GameAiController:
         next_boards[1].make_move(DOWN_MOVE)
         next_boards[2].make_move(RIGHT_MOVE)
         next_boards[3].make_move(LEFT_MOVE)
+
+        s = clock()
         next_scores = []
         for n in range(len(next_boards)):
             if next_boards[n].current_state != self.board.current_state:
                 # Convert to numpy matrix
                 numpy_board = numpy.array(next_boards[n].current_state)
                 numpy_board = numpy_board.astype(numpy.int32, copy=False)
-                next_scores.append(c_score.score_board(numpy_board))
+                
+                next_scores.append(c_score.score_board(int(4), numpy_board))
+               
+                
                 # next_scores.append(self.minimax_scoring(next_boards[n], 1))
             else:
                 next_scores.append(-sys.maxint)
-        
+        e = clock()
+        print "Time required to calculate next move: %0.4f" % (e-s)
         # print('Board before move:')
         # print(self.current_state)
 
         #print('Next scores: ')
         #print(next_scores)
-        if max(next_scores) == -sys.maxint:
-            return -sys.maxint
+        # if max(next_scores) == -sys.maxint:
+        #     return -sys.maxint
         return next_scores.index(max(next_scores))
         
     def minimax_scoring(self, board, depth):
