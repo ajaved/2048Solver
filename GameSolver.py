@@ -194,42 +194,46 @@ class GameAiController:
         self.board = current_board
 
     def calculate_next_move(self):
-        global UP_MOVE
-        global DOWN_MOVE
-        global RIGHT_MOVE
-        global LEFT_MOVE
+        numpy_board = numpy.array(self.board.current_state)
+        numpy_board = numpy_board.astype(numpy.int32, copy=False)
+        return c_score.score_board(int(3), numpy_board)
+               
+        # global UP_MOVE
+        # global DOWN_MOVE
+        # global RIGHT_MOVE
+        # global LEFT_MOVE
 
-        next_boards = [GameBoard(deepcopy(self.board.current_state)), GameBoard(deepcopy(self.board.current_state)), GameBoard(deepcopy(self.board.current_state)), GameBoard(deepcopy(self.board.current_state))]
+        # next_boards = [GameBoard(deepcopy(self.board.current_state)), GameBoard(deepcopy(self.board.current_state)), GameBoard(deepcopy(self.board.current_state)), GameBoard(deepcopy(self.board.current_state))]
 
-        next_boards[0].make_move(UP_MOVE)
-        next_boards[1].make_move(DOWN_MOVE)
-        next_boards[2].make_move(RIGHT_MOVE)
-        next_boards[3].make_move(LEFT_MOVE)
+        # next_boards[0].make_move(UP_MOVE)
+        # next_boards[1].make_move(DOWN_MOVE)
+        # next_boards[2].make_move(RIGHT_MOVE)
+        # next_boards[3].make_move(LEFT_MOVE)
 
-        s = clock()
-        next_scores = []
-        for n in range(len(next_boards)):
-            if next_boards[n].current_state != self.board.current_state:
-                # Convert to numpy matrix
-                numpy_board = numpy.array(next_boards[n].current_state)
-                numpy_board = numpy_board.astype(numpy.int32, copy=False)
+        # s = clock()
+        # next_scores = []
+        # for n in range(len(next_boards)):
+        #     if next_boards[n].current_state != self.board.current_state:
+        #         # Convert to numpy matrix
+        #         numpy_board = numpy.array(next_boards[n].current_state)
+        #         numpy_board = numpy_board.astype(numpy.int32, copy=False)
                 
-                next_scores.append(c_score.score_board(int(4), numpy_board))
+        #         next_scores.append(c_score.score_board(int(3), numpy_board))
                
                 
-                # next_scores.append(self.minimax_scoring(next_boards[n], 1))
-            else:
-                next_scores.append(-sys.maxint)
-        e = clock()
-        print "Time required to calculate next move: %0.4f" % (e-s)
-        # print('Board before move:')
-        # print(self.current_state)
+        #         # next_scores.append(self.minimax_scoring(next_boards[n], 1))
+        #     else:
+        #         next_scores.append(-sys.maxint)
+        # e = clock()
+        # print "Time required to calculate next move: %0.4f" % (e-s)
+        # # print('Board before move:')
+        # # print(self.current_state)
 
-        #print('Next scores: ')
-        #print(next_scores)
-        # if max(next_scores) == -sys.maxint:
-        #     return -sys.maxint
-        return next_scores.index(max(next_scores))
+        # #print('Next scores: ')
+        # #print(next_scores)
+        # # if max(next_scores) == -sys.maxint:
+        # #     return -sys.maxint
+        # return next_scores.index(max(next_scores))
         
     def minimax_scoring(self, board, depth):
         global UP_MOVE

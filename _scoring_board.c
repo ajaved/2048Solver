@@ -1,6 +1,7 @@
 #include <Python.h>
 #include <numpy/arrayobject.h>
 #include "scoring_board.h"
+#include <float.h>
 
 extern int max_depth;
 
@@ -46,9 +47,9 @@ scoring_board_score(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  /* How many data points are there? */
-  int X = (int)PyArray_DIM(board, 0);
-  int Y = (int)PyArray_DIM(board, 1);
+  /* /\* How many data points are there? *\/ */
+  /* int X = (int)PyArray_DIM(board, 0); */
+  /* int Y = (int)PyArray_DIM(board, 1); */
 
   /* Get pointers to the data as C-types. */
   int *c_board  = (int*)PyArray_DATA(board);
@@ -74,14 +75,16 @@ scoring_board_score(PyObject *self, PyObject *args)
   /*   } */
   /*   printf("\n"); */
   /* } */
-
+  
+  float max = FLT_MAX;
+  float min = FLT_MIN;
   /* Call the external C function to compute the board score. */
-  float score = score_board(c_board, X, Y, 0);
+  float score = alpha_beta_scoring(c_board, &min, &max);
 
   /* Clean up. */
   Py_DECREF(board);
 
   /* Build the output tuple */
-  PyObject *py_score = Py_BuildValue("f", score);
+  PyObject *py_score = Py_BuildValue("f", 0);
   return py_score;
 }
