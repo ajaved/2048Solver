@@ -76,15 +76,16 @@ scoring_board_score(PyObject *self, PyObject *args)
   /*   printf("\n"); */
   /* } */
   
-  float max = FLT_MAX;
-  float min = FLT_MIN;
+  /* float max = FLT_MAX; */
+  /* float min = FLT_MIN; */
   /* Call the external C function to compute the board score. */
-  float score = alpha_beta_scoring(c_board, &min, &max);
+  //float score = alpha_beta_scoring(c_board, &min, &max, 0);
+  float score = score_board(c_board, 0);
 
   /* Clean up. */
   Py_DECREF(board);
 
   /* Build the output tuple */
-  PyObject *py_score = Py_BuildValue("f", 0);
+  PyObject *py_score = Py_BuildValue("f", score);
   return py_score;
 }
